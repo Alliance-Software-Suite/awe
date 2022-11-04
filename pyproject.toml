@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+
+[project]
+name = "awe"
+description = "Audit With Ease"
+readme = "README.md"
+requires-python = ">=3.6"
+dynamic = [
+    "version",
+    "dependencies"
+]
+
+[project.scripts]
+awe = "awe:main"
+
+[tool.isort]
+profile = "black"
