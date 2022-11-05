@@ -1,0 +1,1 @@
+from .awe import main

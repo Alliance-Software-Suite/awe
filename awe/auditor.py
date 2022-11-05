@@ -1,11 +1,10 @@
 import json
 import typing
 
-import prettytable as pt
 import requests
 import tabulate
 
-from cfg import Conf
+from .cfg import Conf
 from graphqlclient import GraphQLClient
 
 

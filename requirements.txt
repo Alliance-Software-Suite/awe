@@ -3,3 +3,4 @@ setuptools
 pnwkit
 graphqlclient
 requests
+tabulate
