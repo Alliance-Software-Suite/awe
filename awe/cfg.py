@@ -18,11 +18,14 @@ class Conf(typing.TypedDict):
 
     nations: typing.List[int]
     alliances: typing.List[int]
+    applicants: bool
 
     mmr: str
 
     infra: Infra
     land: Land
+
+    stats: bool
 
 
 def get_config(args) -> Conf:
@@ -50,11 +53,13 @@ def get_config(args) -> Conf:
         cfg["nations"] = args.nations
     if args.alliances is not None:
         cfg["alliances"] = args.alliances
+    cfg["applicants"] = args.applicants
     if args.mmr is not None:
         cfg["mmr"] = args.mmr
     if args.infra is not None:
         cfg["infra"]["max"] = args.infra
     if args.land is not None:
         cfg["land"]["min"] = args.land
+    cfg["stats"] = args.stats
 
     return cfg

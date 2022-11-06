@@ -26,6 +26,12 @@ def get_args():
         action="append",
     )
     parser.add_argument(
+        "-A",
+        "--applicants",
+        help="Include applicants. Only use with -a/--alliance",
+        action="store_true",
+    )
+    parser.add_argument(
         "-c",
         "--config",
         metavar="FILE",
@@ -58,6 +64,12 @@ def get_args():
         type=int,
         help="Enables land auditing and sets the minimum land allowed. "
         "Use the config file to automatically set this value based on the nation's city count.",
+    )
+    parser.add_argument(
+        "-s",
+        "--stats",
+        help="Show some averages and totals.",
+        action="store_true",
     )
 
     args = parser.parse_args()
