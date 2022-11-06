@@ -39,6 +39,7 @@ def do_audit(cfg: Conf) -> None:
     output = []
 
     stats_total_nations = 0
+    stats_total_violators = 0
     stats_total_mil = [0] * 4
     stats_total_cities = 0
 
@@ -51,7 +52,10 @@ def do_audit(cfg: Conf) -> None:
         result = []
 
         def add_result(s):
+            nonlocal stats_total_violators
+
             if len(result) == 0:
+                stats_total_violators += 1
                 result.append(f"{nation['nation_name']} ({nation['id']})")
             result.append(s)
 
@@ -93,8 +97,20 @@ def do_audit(cfg: Conf) -> None:
         output.append(
             "Statistics\n"
             + tabulate.tabulate(
-                [[stats_total_nations, stats_total_cities, m2s(stats_avg_mil)]],
-                headers=["Nations Checked", "Total Cities", "Average Militarization"],
+                [
+                    [
+                        stats_total_nations,
+                        stats_total_violators,
+                        stats_total_cities,
+                        m2s(stats_avg_mil),
+                    ]
+                ],
+                headers=[
+                    "Nations Checked",
+                    "Nations Violating",
+                    "Total Cities",
+                    "Average Militarization",
+                ],
                 stralign="center",
                 numalign="center",
             )
