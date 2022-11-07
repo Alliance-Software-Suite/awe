@@ -10,7 +10,7 @@ def request(client, query):
     for nation in json.loads(
         client.execute(
             f"query{{nations({query},first:500)"
-            f"{{data{{id,nation_name,alliance_position,num_cities,cities{{barracks,factory,hangar,drydock}}}}}}}}"
+            f"{{data{{id,nation_name,alliance_position,num_cities,cities{{barracks,factory,hangar,drydock}}soldiers,tanks,aircraft,ships}}}}}}"
         )
     )["data"]["nations"]["data"]:
         yield nation
@@ -18,6 +18,10 @@ def request(client, query):
 
 def m2s(m):
     return "".join([str(v) for v in m])
+
+
+def m2c(mil, scale=1):
+    return [m * c * scale for m, c in zip(mil, (3000, 250, 15, 5))]
 
 
 def do_audit(cfg: Conf) -> None:
@@ -41,6 +45,10 @@ def do_audit(cfg: Conf) -> None:
     stats_total_nations = 0
     stats_total_violators = 0
     stats_total_mil = [0] * 4
+    stats_total_soldiers = 0
+    stats_total_tanks = 0
+    stats_total_aircraft = 0
+    stats_total_ships = 0
     stats_total_cities = 0
 
     for nation in request(client, query):
@@ -88,6 +96,31 @@ def do_audit(cfg: Conf) -> None:
                 )
             )
 
+        stats_total_soldiers += nation["soldiers"]
+        stats_total_tanks += nation["tanks"]
+        stats_total_aircraft += nation["aircraft"]
+        stats_total_ships += nation["ships"]
+        mil_cap = m2c(mmr, nation["num_cities"])
+        mil_real = [
+            nation["soldiers"],
+            nation["tanks"],
+            nation["aircraft"],
+            nation["ships"],
+        ]
+        if any(cap * cfg["mil_cap"] > real for cap, real in zip(mil_cap, mil_real)):
+            add_result(
+                "Military Capacity Unreached\n"
+                + tabulate.tabulate(
+                    [
+                        [
+                            str(round(real / cap * 100)) + "%"
+                            for real, cap in zip(mil_real, mil_cap)
+                        ]
+                    ],
+                    headers=["Soldiers", "Tanks", "Aircraft", "Ships"],
+                )
+            )
+
         if len(result) != 0:
             output.append("\n".join(result))
 
@@ -103,13 +136,29 @@ def do_audit(cfg: Conf) -> None:
                         stats_total_violators,
                         stats_total_cities,
                         m2s(stats_avg_mil),
+                        *[
+                            str(round(real / cap * 100)) + "%"
+                            for real, cap in zip(
+                                [
+                                    stats_total_soldiers,
+                                    stats_total_tanks,
+                                    stats_total_aircraft,
+                                    stats_total_ships,
+                                ],
+                                m2c(stats_total_mil),
+                            )
+                        ],
                     ]
                 ],
                 headers=[
                     "Nations Checked",
                     "Nations Violating",
                     "Total Cities",
-                    "Average Militarization",
+                    "Average Military Build",
+                    "Barracks Utilization",
+                    "Factory Utilization",
+                    "Hangar Utilization",
+                    "Drydock Utilization",
                 ],
                 stralign="center",
                 numalign="center",

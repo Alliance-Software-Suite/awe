@@ -21,6 +21,7 @@ class Conf(typing.TypedDict):
     applicants: bool
 
     mmr: str
+    mil_cap: float
 
     infra: Infra
     land: Land
@@ -38,6 +39,7 @@ def get_config(args) -> Conf:
     cfg.setdefault("alliances", [])
 
     cfg.setdefault("mmr", "0000")
+    cfg.setdefault("mil_cap", 0.0)
 
     cfg.setdefault("infra", Infra(max=-1, per_city={}))
     cfg["infra"].setdefault("max", -1)
@@ -56,6 +58,8 @@ def get_config(args) -> Conf:
     cfg["applicants"] = args.applicants
     if args.mmr is not None:
         cfg["mmr"] = args.mmr
+    if args.mil_cap is not None:
+        cfg["mil_cap"] = args.mil_cap
     if args.infra is not None:
         cfg["infra"]["max"] = args.infra
     if args.land is not None:

@@ -50,6 +50,14 @@ def get_args():
         help="Sets MMR and enables military auditing.",
     )
     parser.add_argument(
+        "-M",
+        "--militarization",
+        metavar="CAP",
+        type=float,
+        dest="mil_cap",
+        help="Checks how much of the military capacity is filled. Use a range of 0 ~ 1.",
+    )
+    parser.add_argument(
         "-i",
         "--infra",
         metavar="MAX",
